@@ -1,9 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
+import 'react-native-gesture-handler';
+import 'react-native-get-random-values';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider as ReduxProvider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
-import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
-import Navigation from './navigation';
+import useCachedResources from './src/hooks/useCachedResources';
+import useColorScheme from './src/hooks/useColorScheme';
+import Navigation from './src/navigation';
+import { persistor, store } from './src/store/store';
+
+import { Provider as PaperProvider } from 'react-native-paper';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -14,8 +20,13 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
+        <ReduxProvider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <PaperProvider>
+              <Navigation colorScheme={colorScheme} />
+            </PaperProvider>
+          </PersistGate>
+        </ReduxProvider>
       </SafeAreaProvider>
     );
   }
